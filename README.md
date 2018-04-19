@@ -12,7 +12,7 @@ Utilisez les données publiques de l'Open Food Facts
 
 ### 1. Organiser son travail:
   - [ ] Découper le programme en user stories.
-  - [ X ] Initialiser un repo Github et faire son premier push.
+  - [x] Initialiser un repo Github et faire son premier push.
   - [ ] Ecrire la documentation.
 
 ### 2. Construire la base de donnée:
