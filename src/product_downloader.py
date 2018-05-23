@@ -3,6 +3,8 @@
 
 """docstring"""
 
+import os
+
 import requests
 import records
 
@@ -15,7 +17,7 @@ class ProductDownloader:
     def __init__(self):
         """Constructor"""
         self.url = c.url
-        self.db = records.Database(c.id_connexion)
+        self.db = records.Database(c.connexion)
 
     def get_response(self, category, nutrition_grade, number=20):
         """docstring"""
@@ -33,12 +35,34 @@ class ProductDownloader:
         response = requests.get(self.url, params=parameters)
         return response.json()['products']
 
+    def load(self, command, sql="sql"):
+        """docstring"""
+        directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        path_to_file = os.path.join(directory, sql, command)
+        with open(path_to_file) as f:
+            for line in f:
+                return line
+
+    def product_insert(self, category, nutrition_grade):
+        """docstring"""
+        products = self.get_response(category, nutrition_grade)
+        load = self.load("insert_product.sql")
+        for product in products:
+            self.db.query(
+                load,
+                code=product['code'],
+                name=product['product_name'],
+                brand=product['brands'],
+                nutriscrore=product['nutrition_grade_fr'],
+                url=product['url'])
+
+
     def data_insert(self, category, nutrition_grade):
         """docstring"""
         products = self.get_response(category, nutrition_grade)
         sql = """
             INSERT INTO
-                product_list (id, name, brand, nutriscore, url)
+                product (id, name, brand, nutriscore, url)
             VALUES
                 (:code, :name, :brand, :nutriscore, :url)"""
         for product in products:
@@ -47,10 +71,11 @@ class ProductDownloader:
                 code=product['code'],
                 name=product['product_name'],
                 brand=product['brands'],
-                nutriscore=product['nutrition-score-fr'],
+                nutriscore=product['nutrition_grade_fr'],
                 url=product['url'])
 
 
 if __name__ == "__main__":
     downloader = ProductDownloader()
-    downloader.data_insert('pizza', 'D')
+    downloader.product_insert('pizzas', 'D')
+    #downloader.data_insert('pizza', 'D')
