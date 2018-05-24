@@ -1,1 +1,1 @@
-INSERT INTO product (code, name, brand, url, nutriscrore) VALUES (:code, :name, :brand, :url, :nutriscrore)
+INSERT INTO product (code, name, brand, url, nutriscore) VALUES (:code, :name, :brand, :url, :nutriscore)

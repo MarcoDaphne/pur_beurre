@@ -35,27 +35,35 @@ class ProductDownloader:
         response = requests.get(self.url, params=parameters)
         return response.json()['products']
 
-    def load(self, command, sql="sql"):
+    def load(self, file, sql=c.directory):
         """docstring"""
         directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        path_to_file = os.path.join(directory, sql, command)
-        with open(path_to_file) as f:
-            for line in f:
-                return line
+        path_to_file = os.path.join(directory, sql, file)
+        return path_to_file
 
-    def product_insert(self, category, nutrition_grade):
+    def create_table(self):
         """docstring"""
-        products = self.get_response(category, nutrition_grade)
-        load = self.load("insert_product.sql")
-        for product in products:
-            self.db.query(
-                load,
-                code=product['code'],
-                name=product['product_name'],
-                brand=product['brands'],
-                nutriscrore=product['nutrition_grade_fr'],
-                url=product['url'])
+        create = self.load(c.create_table)
+        with open(create) as f:
+            for line in f:
+                self.db.query(line)
 
+    def insert_data(self):
+        """docstring"""
+        pizzas = self.get_response(c.pizzas, c.ngrad_d)
+        pat = self.get_response(c.pat, c.ngrad_d)
+        #glaces = self.get_response(c.glaces, c.ngrad_d)
+        insert = self.load(c.insert_data)
+        with open(insert) as f:
+            for line in f:
+                for product in pizzas, pat:
+                    self.db.query(
+                        line,
+                        code=product['code'],
+                        name=product['product_name'],
+                        brand=product['brands'],
+                        nutriscore=product['nutrition_grade_fr'],
+                        url=product['url'])
 
     def data_insert(self, category, nutrition_grade):
         """docstring"""
@@ -77,5 +85,5 @@ class ProductDownloader:
 
 if __name__ == "__main__":
     downloader = ProductDownloader()
-    downloader.product_insert('pizzas', 'D')
-    #downloader.data_insert('pizza', 'D')
+    downloader.create_table()
+    downloader.insert_data()
