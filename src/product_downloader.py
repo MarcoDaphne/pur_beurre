@@ -48,39 +48,32 @@ class ProductDownloader:
             for line in f:
                 self.db.query(line)
 
-    def insert_data(self):
+    def format(self, line, category):
         """docstring"""
-        pizzas = self.get_response(c.pizzas, c.ngrad_d)
-        pat = self.get_response(c.pat, c.ngrad_d)
-        #glaces = self.get_response(c.glaces, c.ngrad_d)
-        insert = self.load(c.insert_data)
-        with open(insert) as f:
-            for line in f:
-                for product in pizzas, pat:
-                    self.db.query(
-                        line,
-                        code=product['code'],
-                        name=product['product_name'],
-                        brand=product['brands'],
-                        nutriscore=product['nutrition_grade_fr'],
-                        url=product['url'])
-
-    def data_insert(self, category, nutrition_grade):
-        """docstring"""
-        products = self.get_response(category, nutrition_grade)
-        sql = """
-            INSERT INTO
-                product (id, name, brand, nutriscore, url)
-            VALUES
-                (:code, :name, :brand, :nutriscore, :url)"""
-        for product in products:
+        for product in category:
             self.db.query(
-                sql,
+                line,
                 code=product['code'],
                 name=product['product_name'],
                 brand=product['brands'],
                 nutriscore=product['nutrition_grade_fr'],
                 url=product['url'])
+
+    def insert_data(self):
+        """docstring"""
+        pizza = self.get_response(c.pizza, c.ngrad_d)
+        burger = self.get_response(c.burger, c.ngrad_d)
+        pat = self.get_response(c.pat, c.ngrad_d)
+        glace = self.get_response(c.glace, c.ngrad_d)
+        soda = self.get_response(c.soda, c.ngrad_d)
+        insert = self.load(c.insert_data)
+        with open(insert) as f:
+            for line in f:
+                self.format(line, pizza)
+                self.format(line, burger)
+                self.format(line, soda)
+                self.format(line, pat)
+                self.format(line, glace)
 
 
 if __name__ == "__main__":
