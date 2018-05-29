@@ -18,6 +18,7 @@ class ProductDownloader:
         """Constructor"""
         self.url = c.url
         self.db = records.Database(c.connexion)
+        self.stores = []
 
     def get_response(self, category, nutrition_grade, number=20):
         """docstring"""
@@ -48,11 +49,17 @@ class ProductDownloader:
             for line in f:
                 self.db.query(line)
 
-    def format(self, line, category):
+    def insert(self, products):
         """docstring"""
-        for product in category:
+        for product in products:
+            # -- Remplir la table store
+            # Récupérer le champs product['stores']
+            # Le transformer en une liste de magasins
+            # Parcourir cette liste avec une boucle for
+            # Insérer chaque element dans la la table
+            # ON DUPLICATE KEY UPDATE name = :name
             self.db.query(
-                line,
+                c.rds_prod,
                 code=product['code'],
                 name=product['product_name'],
                 brand=product['brands'],
@@ -61,19 +68,16 @@ class ProductDownloader:
 
     def insert_data(self):
         """docstring"""
-        pizza = self.get_response(c.pizza, c.ngrad_d)
-        burger = self.get_response(c.burger, c.ngrad_d)
-        pat = self.get_response(c.pat, c.ngrad_d)
-        glace = self.get_response(c.glace, c.ngrad_d)
-        soda = self.get_response(c.soda, c.ngrad_d)
-        insert = self.load(c.insert_data)
-        with open(insert) as f:
-            for line in f:
-                self.format(line, pizza)
-                self.format(line, burger)
-                self.format(line, soda)
-                self.format(line, pat)
-                self.format(line, glace)
+        cat1 = self.get_response(c.cat1, c.ngrad_d)
+        cat2 = self.get_response(c.cat2, c.ngrad_d)
+        cat3 = self.get_response(c.cat3, c.ngrad_d)
+        cat4 = self.get_response(c.cat4, c.ngrad_d)
+        cat5 = self.get_response(c.cat5, c.ngrad_d)
+        self.insert(cat1)
+        self.insert(cat2)
+        self.insert(cat3)
+        self.insert(cat4)
+        self.insert(cat5)
 
 
 if __name__ == "__main__":
