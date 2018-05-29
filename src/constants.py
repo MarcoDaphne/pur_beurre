@@ -24,3 +24,9 @@ rds_cat = """
         category (name)
     VALUES
         (:name)"""
+rds_store = """
+    INSERT INTO
+        store (name)
+    VALUES
+        (:name)
+    ON DUPLICATE KEY UPDATE name = :name"""

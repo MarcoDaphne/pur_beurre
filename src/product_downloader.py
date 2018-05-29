@@ -49,6 +49,12 @@ class ProductDownloader:
             for line in f:
                 self.db.query(line)
 
+    def get_stores(self, stores):
+        """docstring"""
+        self.stores.append(stores)
+        for store in self.stores:
+            self.db.query(c.rds_store, name=store)
+
     def insert(self, products, category):
         """docstring"""
         self.db.query(c.rds_cat, name=category)
@@ -67,6 +73,7 @@ class ProductDownloader:
                 nutriscore=product['nutrition_grade_fr'],
                 url=product['url'],
                 cat_name=category)
+            self.get_stores(product['stores'])
 
     def insert_data(self):
         """docstring"""
