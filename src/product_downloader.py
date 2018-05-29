@@ -49,8 +49,9 @@ class ProductDownloader:
             for line in f:
                 self.db.query(line)
 
-    def insert(self, products):
+    def insert(self, products, category):
         """docstring"""
+        self.db.query(c.rds_cat, name=category)
         for product in products:
             # -- Remplir la table store
             # Récupérer le champs product['stores']
@@ -64,13 +65,14 @@ class ProductDownloader:
                 name=product['product_name'],
                 brand=product['brands'],
                 nutriscore=product['nutrition_grade_fr'],
-                url=product['url'])
+                url=product['url'],
+                cat_name=category)
 
     def insert_data(self):
         """docstring"""
         for category in c.categories:
             data = self.get_response(category, c.ngrad_d)
-            self.insert(data)
+            self.insert(data, category)
 
 
 if __name__ == "__main__":

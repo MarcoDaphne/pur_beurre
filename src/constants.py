@@ -16,6 +16,11 @@ ngrad_d = 'D'
 ngrad_e = 'E'
 rds_prod = """
     INSERT INTO
-        product (code, name, brand, url, nutriscore)
+        product (code, name, brand, url, nutriscore, category_id)
     VALUES
-        (:code, :name, :brand, :url, :nutriscore)"""
+        (:code, :name, :brand, :url, :nutriscore, (SELECT id FROM category WHERE name = :cat_name))"""
+rds_cat = """
+    INSERT INTO
+        category (name)
+    VALUES
+        (:name)"""
