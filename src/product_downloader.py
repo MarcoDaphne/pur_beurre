@@ -34,7 +34,7 @@ class ProductDownloader:
             "json": "1"
         }
         response = requests.get(self.url, params=parameters)
-        return response.json()['products']
+        return response.json()[c.products]
 
     def load(self, file, sql=c.directory):
         """docstring"""
@@ -68,16 +68,9 @@ class ProductDownloader:
 
     def insert_data(self):
         """docstring"""
-        cat1 = self.get_response(c.cat1, c.ngrad_d)
-        cat2 = self.get_response(c.cat2, c.ngrad_d)
-        cat3 = self.get_response(c.cat3, c.ngrad_d)
-        cat4 = self.get_response(c.cat4, c.ngrad_d)
-        cat5 = self.get_response(c.cat5, c.ngrad_d)
-        self.insert(cat1)
-        self.insert(cat2)
-        self.insert(cat3)
-        self.insert(cat4)
-        self.insert(cat5)
+        for category in c.categories:
+            data = self.get_response(category, c.ngrad_d)
+            self.insert(data)
 
 
 if __name__ == "__main__":
