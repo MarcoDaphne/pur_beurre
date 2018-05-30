@@ -51,12 +51,14 @@ class ProductDownloader:
 
     def get_stores(self, stores):
         """docstring"""
+        # -tc- Ce n'est pas ce qu'on veux ici, car tu n'obtiens pas une liste de magasins!
         self.stores.append(stores)
         for store in self.stores:
             self.db.query(c.rds_store, name=store)
 
     def insert(self, products, category):
         """docstring"""
+        # -tc- est-il possible que la catégorie existe déjà dans la base?
         self.db.query(c.rds_cat, name=category)
         for product in products:
             # -- Remplir la table store
