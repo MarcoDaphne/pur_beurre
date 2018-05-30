@@ -18,7 +18,8 @@ rds_prod = """
     INSERT INTO
         product (code, name, brand, url, nutriscore, category_id)
     VALUES
-        (:code, :name, :brand, :url, :nutriscore, (SELECT id FROM category WHERE name = :cat_name))"""
+        (:code, :name, :brand, :url, :nutriscore,
+        (SELECT id FROM category WHERE name = :cat_name))"""
 rds_cat = """
     INSERT INTO
         category (name)
@@ -30,3 +31,8 @@ rds_store = """
     VALUES
         (:name)
     ON DUPLICATE KEY UPDATE name = :name"""
+rds_str_prod = """
+    INSERT INTO
+        store_product (store_id, product_code)
+    VALUES
+        ((SELECT id FROM store WHERE name = :store), :code)"""

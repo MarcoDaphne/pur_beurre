@@ -53,18 +53,13 @@ class ProductDownloader:
         """docstring"""
         self.stores.append(stores)
         for store in self.stores:
-            self.db.query(c.rds_store, name=store)
+            if len(store.strip()) != 0:
+                self.db.query(c.rds_store, name=store)
 
     def insert(self, products, category):
         """docstring"""
         self.db.query(c.rds_cat, name=category)
         for product in products:
-            # -- Remplir la table store
-            # Récupérer le champs product['stores']
-            # Le transformer en une liste de magasins
-            # Parcourir cette liste avec une boucle for
-            # Insérer chaque element dans la la table
-            # ON DUPLICATE KEY UPDATE name = :name
             self.db.query(
                 c.rds_prod,
                 code=product['code'],
@@ -74,6 +69,10 @@ class ProductDownloader:
                 url=product['url'],
                 cat_name=category)
             self.get_stores(product['stores'])
+            self.db.query(
+                c.rds_str_prod,
+                code=product['code'],
+                store=product['stores'])
 
     def insert_data(self):
         """docstring"""
