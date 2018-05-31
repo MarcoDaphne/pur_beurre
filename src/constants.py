@@ -14,6 +14,7 @@ ngrad_b = 'B'
 ngrad_c = 'C'
 ngrad_d = 'D'
 ngrad_e = 'E'
+comma = ','
 rds_prod = """
     INSERT INTO
         product (code, name, brand, url, nutriscore, category_id)

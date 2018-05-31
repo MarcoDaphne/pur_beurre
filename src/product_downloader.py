@@ -18,7 +18,6 @@ class ProductDownloader:
         """Constructor"""
         self.url = c.url
         self.db = records.Database(c.connexion)
-        self.stores = []
 
     def get_response(self, category, nutrition_grade, number=20):
         """docstring"""
@@ -51,9 +50,9 @@ class ProductDownloader:
 
     def get_stores(self, stores):
         """docstring"""
-        self.stores.append(stores)
-        for store in self.stores:
-            if len(store.strip()) != 0:
+        if len(stores.strip()) != 0:
+            list_store = stores.split(c.comma)
+            for store in list_store:
                 self.db.query(c.rds_store, name=store)
 
     def insert(self, products, category):
