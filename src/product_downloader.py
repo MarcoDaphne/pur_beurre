@@ -19,21 +19,18 @@ class ProductDownloader:
         self.url = c.url
         self.db = records.Database(c.connexion)
 
-    def get_response(self, category, nutrition_grade, number=20):
+    def get_response(self, category, number=20):
         """docstring"""
         parameters = {
             "action": "process",
             "tagtype_0": "categories",
             "tag_contains_0": "contains",
             "tag_0": category,
-            "tagtype_1": "nutrition_grades",
-            "tag_contains_1": "contains",
-            "tag_1": nutrition_grade,
             "page_size": number,
             "json": "1"
         }
         response = requests.get(self.url, params=parameters)
-        return response.json()[c.products]
+        return response.json()['products']
 
     def load(self, file, sql=c.directory):
         """docstring"""
@@ -48,35 +45,45 @@ class ProductDownloader:
             for line in f:
                 self.db.query(line)
 
-    def get_stores(self, stores):
+    def get_stores(self, stores, product_code):
         """docstring"""
         if len(stores.strip()) != 0:
             list_store = stores.split(c.comma)
             for store in list_store:
                 self.db.query(c.rds_store, name=store)
+                self.db.query(
+                    c.rds_str_prod,
+                    code=product_code,
+                    store=store)
+
+    def is_product_invalid(self, product):
+        """docstring"""
+        keys = ['code', 'product_name', 'nutrition_grade_fr', 'url']
+        for key in keys:
+            if key not in product or not product[key]:
+                return True
+        return False
 
     def insert(self, products, category):
         """docstring"""
         self.db.query(c.rds_cat, name=category)
         for product in products:
+            if self.is_product_invalid(product):
+                continue
             self.db.query(
                 c.rds_prod,
                 code=product['code'],
                 name=product['product_name'],
-                brand=product['brands'],
+                brand=product.get('brands', ''),
                 nutriscore=product['nutrition_grade_fr'],
                 url=product['url'],
                 cat_name=category)
-            self.get_stores(product['stores'])
-            self.db.query(
-                c.rds_str_prod,
-                code=product['code'],
-                store=product['stores'])
+            self.get_stores(product.get('stores', ''), product['code'])
 
     def insert_data(self):
         """docstring"""
         for category in c.categories:
-            data = self.get_response(category, c.ngrad_d)
+            data = self.get_response(category, 1000)
             self.insert(data, category)
 
 
