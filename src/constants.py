@@ -40,22 +40,9 @@ rds_str_prod = """
     VALUES
         ((SELECT id FROM store WHERE name = :store), :code)"""
 
-sel_cat = """SELECT * from category"""
+category = """SELECT * from category ORDER BY id"""
 
-category_id = """SELECT id FROM category"""
-
-sel_prod = """
-    SELECT code, product.name, store.name as store, brand, nutriscore, url
-    FROM product
-    INNER JOIN store_product
-    ON product.code = product_code
-    INNER JOIN store
-    ON store.id = store_id
-    WHERE category_id = :cat_id
-    AND nutriscore BETWEEN 'A' AND 'B'
-    GROUP BY product.name
-    LIMIT 5
-    UNION
+product = """
     SELECT code, product.name, store.name as store, brand, nutriscore, url
     FROM product
     INNER JOIN store_product
@@ -67,7 +54,21 @@ sel_prod = """
     GROUP BY product.name
     LIMIT 15"""
 
-product = """
+category_id = """SELECT id FROM category"""
+
+subtitutes = """
+    SELECT code, product.name, store.name as store, brand, nutriscore, url
+    FROM product
+    INNER JOIN store_product
+    ON product.code = product_code
+    INNER JOIN store
+    ON store.id = store_id
+    WHERE category_id = :cat_id
+    AND nutriscore BETWEEN 'A' AND 'B'
+    ORDER BY RAND()
+    LIMIT 5"""
+
+productssss = """
     SELECT code, product.name, store.name as store, brand, nutriscore, url
     FROM product
     INNER JOIN store_product
