@@ -25,28 +25,6 @@ class Interface:
             if response in valid_response:
                 return response
 
-    def show_category(self):
-        categories = self.category_manager.select_category()
-        for category in categories:
-            print('\t{}. {}'.format(category['id'], category['name']))
-        self.submenu1()
-
-    def show_products(self):
-        products = self.product_manager.select_product()
-        identification = []
-        for i, product in enumerate(products):
-            i += 1
-            print("\n{} - {}\n".format(i, product['name'].title()))
-            print("Marque: {} ||| Point de vente: {} ||| Code: {}".format(
-                product['brand'],
-                product['store'],
-                product['code']))
-            print("Url: {}".format(product['url']))
-            print("Nutriscore: {}\n\n\n".format(product['nutriscore'].upper()))
-            identification.append((i, product['code']))
-        product_choice = int(input('Sélectionner un produit : '))
-        return product_choice, identification
-
     def want_record(self):
         for element in id_product:
             if choice == element[0]:
@@ -59,30 +37,74 @@ class Interface:
                     print("Nutriscore : {}".format(i['nutriscore'].upper()))
                     print("Url : {}".format(i['url']))
 
-    def main_menu(self):
-        response = self.get_response("""--- Menu ---\n
-1. Quel aliment souhaitez-vous remplacer ?
-2. Retrouver mes aliments substitués.
-q. Quitter.
-\nEntrer votre réponse: """, "12q")
+    def display_product_menu(self, num):
+        products = self.product_manager.select_product(num)
+        list_id = []
+        print('\n----- PRODUITS -----\n')
+        for i, dictionary in enumerate(products):
+            i += 1
+            list_id.append((i, dictionary['code']))
+            print(c.display_products.format(i, **dictionary))
+        response = self.get_response("""\nb. Retour\nq. Quitter
+\nEntrer votre réponse: """, "12345678910bq")
         next_step = {
-            "1": self.submenu1(),
-            "q": exit()
+            "1": self.want_record,
+            "2": self.want_record,
+            "3": self.want_record,
+            "4": self.want_record,
+            "5": self.want_record,
+            "6": self.want_record,
+            "7": self.want_record,
+            "8": self.want_record,
+            "9": self.want_record,
+            "10": self.want_record,
+            "b": self.display_category_menu,
+            "q": self.quit_menu
+        }
+        params = response
+        if response in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
+            params = int(response)
+            for element in list_id:
+                if params == element[0]:
+                    next_step[response](element[1])
+        else:
+            next_step[response]()
+
+    def display_category_menu(self):
+        category = self.category_manager.select_category()
+        response = self.get_response(c.display_categories.format(
+            category[0]['id'], category[0]['name'].capitalize(),
+            category[1]['id'], category[1]['name'].capitalize(),
+            category[2]['id'], category[2]['name'].capitalize(),
+            category[3]['id'], category[3]['name'].capitalize(),
+            category[4]['id'], category[4]['name'].capitalize()),
+            "12345bq")
+        next_step = {
+            "1": self.display_product_menu,
+            "2": self.display_product_menu,
+            "3": self.display_product_menu,
+            "4": self.display_product_menu,
+            "5": self.display_product_menu,
+            "b": self.display_main_menu,
+            "q": self.quit_menu
+        }
+        params = response
+        if response in ['1', '2', '3', '4', '5']:
+            params = int(response)
+            next_step[response](params)
+        else:
+            next_step[response]()
+
+    def quit_menu(self):
+        return quit('A bientôt')
+
+    def display_main_menu(self):
+        response = self.get_response(c.display_menu, "1q")
+        next_step = {
+            "1": self.display_category_menu,
+            "q": self.quit_menu
         }
         return next_step[response]()
-
-    def submenu1(self):
-        categories = self.category_manager.select_category()
-        response = self.get_response("""\n---Catégories\n
-{}. {}\n{}. {}\n{}. {}\n{}. {}\n{}. {}
-b. Retour
-q. Quitter
-\nEntrer votre réponse: """.format(
-            categories[0]['id'], categories[0]['name'].capitalize(),
-            categories[1]['id'], categories[1]['name'].capitalize(),
-            categories[2]['id'], categories[2]['name'].capitalize(),
-            categories[3]['id'], categories[3]['name'].capitalize(),
-            categories[4]['id'], categories[4]['name'].capitalize()), "12345bq")
 
 
 if __name__ == "__main__":
@@ -90,4 +112,4 @@ if __name__ == "__main__":
     manager_c = category_manager.CategoryManager(downloader)
     manager_p = product_manager.ProductManager(downloader)
     client = Interface(downloader, manager_c, manager_p)
-    client.main_menu()
+    client.display_main_menu()

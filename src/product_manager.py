@@ -9,10 +9,10 @@ class ProductManager:
     def __init__(self, pd):
         self.pd = pd
 
-    def select_product(self):
-        products = self.pd.db.query(c.product, cat_id=int())
-        products = products.as_dict()
-        return products
+    def select_product(self, num=int()):
+        datas = self.pd.db.query(c.product, cat_id=num)
+        datas = datas.as_dict()
+        return datas
 
 
 if __name__ == '__main__':

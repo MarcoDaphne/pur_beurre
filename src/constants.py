@@ -14,6 +14,7 @@ ngrad_c = 'C'
 ngrad_d = 'D'
 ngrad_e = 'E'
 comma = ','
+
 rds_prod = """
     INSERT INTO
         product (code, name, brand, url, nutriscore, category_id)
@@ -42,6 +43,18 @@ rds_str_prod = """
 
 category = """SELECT * from category ORDER BY id"""
 
+display_menu = """----- MENU -----\n
+1. Quel aliment souhaitez-vous remplacer ?
+2. Retrouver mes aliments substitués.
+\nq. Quitter.
+\n-- Entrer votre réponse: """
+
+display_categories = """\n----- CATEGORIES -----\n
+{}. {}\n{}. {}\n{}. {}\n{}. {}\n{}. {}\n\nb. Retour\nq. Quitter
+\n-- Entrer votre réponse: """
+
+display_products = """{}. {name}"""
+
 product = """
     SELECT code, product.name, store.name as store, brand, nutriscore, url
     FROM product
@@ -52,9 +65,7 @@ product = """
     WHERE category_id = :cat_id
     AND nutriscore BETWEEN 'C' AND 'E'
     GROUP BY product.name
-    LIMIT 15"""
-
-category_id = """SELECT id FROM category"""
+    LIMIT 10"""
 
 subtitutes = """
     SELECT code, product.name, store.name as store, brand, nutriscore, url

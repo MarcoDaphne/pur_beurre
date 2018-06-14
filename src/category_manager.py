@@ -8,11 +8,12 @@ import constants as c
 class CategoryManager:
     def __init__(self, pd):
         self.pd = pd
+        self.categories = []
 
     def select_category(self):
-        categories = self.pd.db.query(c.category)
-        categories = categories.as_dict()
-        return categories
+        datas = self.pd.db.query(c.category)
+        datas = datas.as_dict()
+        return datas
 
 
 if __name__ == '__main__':
