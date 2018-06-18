@@ -25,20 +25,23 @@ class Interface:
             if response in valid_response:
                 return response
 
-    def want_record(self):
-        for element in id_product:
-            if choice == element[0]:
-                show = self.prodl.db.query(c.product, cod=element[1])
-                for i in show:
-                    print("\n- {}".format(i['name'].title()))
-                    print("Code : {}".format(i['code']))
-                    print("Marque : {}".format(i['brand']))
-                    print("Point de vente : {}".format(i['store']))
-                    print("Nutriscore : {}".format(i['nutriscore'].upper()))
-                    print("Url : {}".format(i['url']))
+    def display_substitute_menu(self, code, num):
+        chosen_product = self.product_manager.display_with_id(
+            c.chosen_product, code)
+        substitute = self.product_manager.display_by_category(
+            c.substitute, num)
+        list_id = []
+        for dictionary in chosen_product:
+            print('\n----- {} -----\n'.format(dictionary['product'].upper()))
+            print(c.display_chosen_product.format(**dictionary))
+        print('\n----- SUBSTITUTS -----\n')
+        for i, dictionary in enumerate(substitute):
+            i += 1
+            list_id.append((i, dictionary['code']))
+            print(c.display_substitutes.format(i, **dictionary))
 
     def display_product_menu(self, num):
-        products = self.product_manager.select_product(num)
+        products = self.product_manager.display_by_category(c.product, num)
         list_id = []
         print('\n----- PRODUITS -----\n')
         for i, dictionary in enumerate(products):
@@ -48,25 +51,23 @@ class Interface:
         response = self.get_response("""\nb. Retour\nq. Quitter
 \nEntrer votre réponse: """, "12345678910bq")
         next_step = {
-            "1": self.want_record,
-            "2": self.want_record,
-            "3": self.want_record,
-            "4": self.want_record,
-            "5": self.want_record,
-            "6": self.want_record,
-            "7": self.want_record,
-            "8": self.want_record,
-            "9": self.want_record,
-            "10": self.want_record,
+            "1": self.display_substitute_menu,
+            "2": self.display_substitute_menu,
+            "3": self.display_substitute_menu,
+            "4": self.display_substitute_menu,
+            "5": self.display_substitute_menu,
+            "6": self.display_substitute_menu,
+            "7": self.display_substitute_menu,
+            "8": self.display_substitute_menu,
+            "9": self.display_substitute_menu,
+            "10": self.display_substitute_menu,
             "b": self.display_category_menu,
             "q": self.quit_menu
         }
-        params = response
         if response in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
-            params = int(response)
             for element in list_id:
-                if params == element[0]:
-                    next_step[response](element[1])
+                if int(response) == element[0]:
+                    next_step[response](element[1], num)
         else:
             next_step[response]()
 

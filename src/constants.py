@@ -41,8 +41,6 @@ rds_str_prod = """
     VALUES
         ((SELECT id FROM store WHERE name = :store), :code)"""
 
-category = """SELECT * from category ORDER BY id"""
-
 display_menu = """----- MENU -----\n
 1. Quel aliment souhaitez-vous remplacer ?
 2. Retrouver mes aliments substitués.
@@ -55,35 +53,39 @@ display_categories = """\n----- CATEGORIES -----\n
 
 display_products = """{}. {name}"""
 
+display_chosen_product = """
+Marque: {brand}
+Point de vente: {store}
+Nutriscore: {nutriscore}
+{url}\n"""
+
+display_substitutes = """{}. {name}\nNutriscore: {nutriscore}\n"""
+
+category = """SELECT * from category ORDER BY id"""
+
 product = """
-    SELECT code, product.name, store.name as store, brand, nutriscore, url
+    SELECT code, product.name
     FROM product
-    INNER JOIN store_product
-    ON product.code = product_code
-    INNER JOIN store
-    ON store.id = store_id
     WHERE category_id = :cat_id
     AND nutriscore BETWEEN 'C' AND 'E'
-    GROUP BY product.name
+    ORDER BY RAND()
     LIMIT 10"""
 
-subtitutes = """
-    SELECT code, product.name, store.name as store, brand, nutriscore, url
+chosen_product = """
+    SELECT
+    product.code, product.name as product,
+    brand, store.name as store, nutriscore, url
     FROM product
-    INNER JOIN store_product
+    LEFT JOIN store_product
     ON product.code = product_code
-    INNER JOIN store
+    LEFT JOIN store
     ON store.id = store_id
+    WHERE product.code = :identification"""
+
+substitute = """
+    SELECT code, name, nutriscore
+    FROM product
     WHERE category_id = :cat_id
     AND nutriscore BETWEEN 'A' AND 'B'
     ORDER BY RAND()
     LIMIT 5"""
-
-productssss = """
-    SELECT code, product.name, store.name as store, brand, nutriscore, url
-    FROM product
-    INNER JOIN store_product
-    ON product.code = product_code
-    INNER JOIN store
-    ON store.id = store_id
-    WHERE product.code = :cod"""
