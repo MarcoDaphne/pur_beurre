@@ -41,6 +41,23 @@ rds_str_prod = """
     VALUES
         ((SELECT id FROM store WHERE name = :store), :code)"""
 
+list_name = """SELECT name FROM client"""
+
+check_password = """
+    SELECT
+        password
+    FROM
+        client
+    WHERE
+        name = :name"""
+
+register_client = """
+    INSERT INTO
+        client (name, password)
+    VALUES
+        (:name, :password)
+    ON DUPLICATE KEY UPDATE name = :name"""
+
 display_menu = """----- MENU -----\n
 1. Quel aliment souhaitez-vous remplacer ?
 2. Retrouver mes aliments substitués.
