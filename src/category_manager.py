@@ -10,13 +10,17 @@ class CategoryManager:
         self.pd = pd
         self.categories = []
 
-    def select_category(self):
+    def display_category(self):
         datas = self.pd.db.query(c.category)
         datas = datas.as_dict()
-        return datas
+        print("\n----- CATEGORIES -----\n")
+        for dictionary in datas:
+            print("{}. {}".format(
+                dictionary['id'],
+                dictionary['name'].capitalize()))
 
 
 if __name__ == '__main__':
     pd = pd.ProductDownloader()
     manage_category = CategoryManager(pd)
-    manage_category.select_category()
+    manage_category.display_category()

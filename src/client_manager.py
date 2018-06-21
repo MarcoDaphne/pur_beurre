@@ -14,6 +14,7 @@ class ClientManager:
     def __init__(self, pd):
         """ Constructor """
         self.pd = pd
+        self.id_client = int()
 
     def check_name(self, name):
         """docstring"""
@@ -30,6 +31,12 @@ class ClientManager:
         for dictionary in list_password:
             if password == dictionary['password']:
                 return True
+
+    def get_id_client(self, name):
+        """docstring"""
+        id_client = self.pd.db.query(c.id_client, name=name)
+        id_client = id_client.as_dict()
+        return id_client[0]['id']
 
     def sign_in(self):
         """docstring"""
@@ -57,7 +64,7 @@ class ClientManager:
                     not_registered = False
         print("\nBienvenue {} !!!\n".format(name))
 
-    def login(self):
+    def log_in(self):
         """docstring"""
         print("\n----- CONNEXION -----\n")
         not_connected = True
@@ -75,12 +82,19 @@ class ClientManager:
                 if self.check_password(name, password) is not True:
                     print("\nMot de passe incorrect.\n")
                 else:
-                    print("\nBonjour {} !!!\n".format(name))
+                    print("\nVous êtes connecté")
                     not_connected = False
+        self.id_client = self.get_id_client(name)
+
+    def sign_in_then_log_in(self):
+        """docstring"""
+        self.sign_in()
+        self.log_in()
 
 
 if __name__ == "__main__":
     pd = pd.ProductDownloader()
     manage_client = ClientManager(pd)
     manage_client.sign_in()
-    manage_client.login()
+    manage_client.log_in()
+    manage_client.sign_in_then_log_in()
