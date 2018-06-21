@@ -28,6 +28,7 @@ class Interface:
         self.product_manager = product_manager
         self.client_manager = client_manager
         self.favorite_manager = favorite_manager
+        self.session = {'user': None, 'connected': False}
 
     def get_response(self, prompt, valid_response):
         while True:

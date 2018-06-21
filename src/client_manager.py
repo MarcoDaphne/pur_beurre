@@ -3,7 +3,7 @@
 
 """docstring"""
 
-import hashlib
+from passlib.hash import argon2
 from getpass import getpass
 
 import product_downloader as pd
@@ -29,7 +29,7 @@ class ClientManager:
         list_password = self.pd.db.query(c.check_password, name=name)
         list_password = list_password.as_dict()
         for dictionary in list_password:
-            if password == dictionary['password']:
+            if argon2.verify(password, dictionary['password']):
                 return True
 
     def get_id_client(self, name):
@@ -54,9 +54,7 @@ class ClientManager:
                 if len(password) < 5:
                     print("\n6 caractères minimum.\n")
                 else:
-                    password = "@Pur_Beurre" + password + "Sign_in@"
-                    password = password.encode()
-                    password = hashlib.sha1(password).hexdigest()
+                    password = argon2.hash(password)
                     self.pd.db.query(
                         c.register_client,
                         name=name,
@@ -76,9 +74,6 @@ class ClientManager:
                     name))
             else:
                 password = getpass("Mot de passe: ")
-                password = "@Pur_Beurre" + password + "Sign_in@"
-                password = password.encode()
-                password = hashlib.sha1(password).hexdigest()
                 if self.check_password(name, password) is not True:
                     print("\nMot de passe incorrect.\n")
                 else:
