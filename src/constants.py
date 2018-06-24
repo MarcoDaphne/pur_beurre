@@ -41,7 +41,7 @@ rds_str_prod = """
     VALUES
         ((SELECT id FROM store WHERE name = :store), :code)"""
 
-list_name = """SELECT name FROM client"""
+list_email = """SELECT email FROM client"""
 
 check_password = """
     SELECT
@@ -49,7 +49,7 @@ check_password = """
     FROM
         client
     WHERE
-        name = :name"""
+        email = :email"""
 
 id_client = """
     SELECT
@@ -57,22 +57,22 @@ id_client = """
     FROM
         client
     WHERE
-        name = :name"""
+        email = :email"""
 
 register_client = """
     INSERT INTO
-        client (name, password)
+        client (email, password)
     VALUES
-        (:name, :password)
-    ON DUPLICATE KEY UPDATE name = :name"""
+        (:email, :password)
+    ON DUPLICATE KEY UPDATE email = :email"""
 
-r_substitute = """
+record_substitute = """
     INSERT INTO
         favorite (client_id, product_id)
     VALUES
-        (:c_id, :p_id)"""
+        (:client_id, :product_id)"""
 
-display_menu = """----- MENU -----\n
+display_menu = """\n------ MENU PRINCIPALE ------\n
 1. Quel aliment souhaitez-vous remplacer ?
 2. Retrouver mes aliments substitués.
 \nq. Quitter.
@@ -91,10 +91,13 @@ b. Retour
 q. Quitter
 \nEntrer votre réponse: """
 
-chosen_substitute = """Marque: {brand}
-Point de vente: {store}
-Nutriscore: {nutriscore}
-{url}\n"""
+chosen_substitute = """\n********************\n
+{}
+Marque: {}
+Point de vente: {}
+Nutriscore: {}
+{}\n
+********************"""
 
 display_substitutes = """\nb. Retour
 q. Quitter
@@ -103,13 +106,26 @@ q. Quitter
 display_login_menu = """\n----- INSCRIPTION - CONNEXION -----\n
 1. Se connecter
 2. S'inscrire
-b. Retour
 q. Quitter
 \nSélectionnez une réponse: """
 
-display_favorite = """
-    SELECT 
-    product.name as substitut, brand, store.name as store, nutriscore, url
+display_favorite_menu = """\nb. Retour
+q. Quitter"""
+
+display_favorites = """
+{substitute}
+Marque: {brand}
+Point de vente: {store}
+Nutriscore: {nutriscore}
+Url: {url}
+\n------------------------------------------------\n"""
+
+valid_record = """\nLe produit est enregistré.
+\nRetrouvez vos produits préférés dans le menu principale > réponse [2]\n"""
+
+favorite = """
+    SELECT
+    product.name as substitute, brand, store.name as store, nutriscore, url
     FROM product
     INNER JOIN favorite
     ON product_id = product.code
