@@ -1,30 +1,30 @@
 #!/usr/bin/env python
 # Coding: utf-8
 
-import product_downloader as pd
+import product_downloader as p_downloader
 import constants as c
 
 
 class FavoriteManager:
-    def __init__(self, pd):
-        self.pd = pd
+    def __init__(self, p_downloader):
+        self.p_downloader = p_downloader
 
     def record_substitute(self, client=int(), code=int()):
         """docstring"""
-        return self.pd.db.query(
+        return self.p_downloader.db.query(
             c.record_substitute,
             client_id=client,
             product_id=code)
 
     def retrieve_substitutes(self, client_id=int()):
         """docstring"""
-        datas = self.pd.db.query(c.favorite, client=client_id)
+        datas = self.p_downloader.db.query(c.favorite, client=client_id)
         datas = datas.as_dict()
         return datas
 
 
 if __name__ == '__main__':
-    pd = pd.ProductDownloader()
-    manage_favorite = FavoriteManager(pd)
+    p_downloader = p_downloader.ProductDownloader()
+    manage_favorite = FavoriteManager(p_downloader)
     manage_favorite.record_substitute()
     manage_favorite.retrieve_substitutes()

@@ -3,11 +3,11 @@ connexion = "mysql+pymysql://testeur:camomille@localhost/test?charset=utf8mb4"
 directory = "sql"
 create_table = 'create_table.sql'
 categories = [
-    'pizza',
-    'steack hache',
-    'pates a tartiner',
-    'creme glacee',
-    'soda']
+    'Charcuterie',
+    'Fromage',
+    'Légume',
+    'Pizza',
+    'Chocolat']
 ngrad_a = 'A'
 ngrad_b = 'B'
 ngrad_c = 'C'
@@ -76,11 +76,11 @@ display_menu = """\n------ MENU PRINCIPALE ------\n
 1. Quel aliment souhaitez-vous remplacer ?
 2. Retrouver mes aliments substitués.
 \nq. Quitter.
-\n-- Entrer votre réponse: """
+\nEntrer votre réponse: """
 
 display_categories = """\nb. Retour
 q. Quitter
-\n- Sélectionnez une catégorie: """
+\nSélectionnez une catégorie: """
 
 display_products = """\nb. Retour
 q. Quitter
@@ -89,7 +89,7 @@ q. Quitter
 display_chosen_substitute = """\nr. Enregistrer
 b. Retour
 q. Quitter
-\nEntrer votre réponse: """
+\nEntrez votre réponse: """
 
 chosen_substitute = """\n********************\n
 {}
@@ -110,7 +110,8 @@ q. Quitter
 \nSélectionnez une réponse: """
 
 display_favorite_menu = """\nb. Retour
-q. Quitter"""
+q. Quitter
+\nEntrez votre réponse: """
 
 display_favorites = """
 {substitute}
@@ -120,8 +121,13 @@ Nutriscore: {nutriscore}
 Url: {url}
 \n------------------------------------------------\n"""
 
-valid_record = """\nLe produit est enregistré.
-\nRetrouvez vos produits préférés dans le menu principale > réponse [2]\n"""
+valid_record = "\nLe produit est enregistré.\n"
+
+information = """Retrouvez vos produits préférés dans la section :
+[ Retrouver mes aliments substitués ]
+Menu Principale > choix n°2"""
+
+check = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'
 
 favorite = """
     SELECT

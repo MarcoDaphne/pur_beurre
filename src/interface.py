@@ -8,30 +8,24 @@ from passlib.hash import argon2
 from getpass import getpass
 import time
 
-import product_downloader
-import category_manager
-import product_manager
-import client_manager
-import favorite_manager
+import product_downloader as product_d
+import category_manager as category_m
+import product_manager as product_m
+import client_manager as client_m
+import favorite_manager as favorite_m
 import constants as c
 
 
 class Interface:
     """docstring"""
 
-    def __init__(
-        self,
-        product_downloader,
-        category_manager,
-        product_manager,
-        client_manager,
-        favorite_manager):
+    def __init__(self, product_d, category_m, product_m, client_m, favorite_m):
         """Constructor"""
-        self.product_downloader = product_downloader
-        self.category_manager = category_manager
-        self.product_manager = product_manager
-        self.client_manager = client_manager
-        self.favorite_manager = favorite_manager
+        self.product_d = product_d
+        self.category_m = category_m
+        self.product_m = product_m
+        self.client_m = client_m
+        self.favorite_m = favorite_m
         self.session = {'user': None, 'connected': False}
 
     def get_response(self, prompt, valid_response):
@@ -42,7 +36,9 @@ class Interface:
 
     def valid_record(self):
         print(c.valid_record)
-        time.sleep(4)
+        time.sleep(3)
+        print(c.information)
+        time.sleep(3)
 
     def sign_in(self):
         """docstring"""
@@ -50,9 +46,9 @@ class Interface:
         not_registered = True
         while not_registered:
             email = input("Entrez votre email: ")
-            if len(email) < 3:
-                print("\n4 caractères minimum.\n")
-            elif self.client_manager.check_email_database(email) is True:
+            if self.client_m.check_email(email) is True:
+                print("\nAdresse email non valide.\n")
+            elif self.client_m.check_email_database(email) is True:
                 print("'{}' existe déjà dans la base de donnée.".format(email))
             else:
                 password = input("Entrez votre mot de passe: ")
@@ -60,7 +56,7 @@ class Interface:
                     print("\n6 caractères minimum.\n")
                 else:
                     password = argon2.hash(password)
-                    self.client_manager.register_client(email, password)
+                    self.client_m.register_client(email, password)
                     not_registered = False
                     print()
 
@@ -69,12 +65,12 @@ class Interface:
         print("\n----- CONNEXION -----\n")
         while self.session['connected'] is False:
             email = input("Email: ")
-            if self.client_manager.check_email_database(email) is not True:
+            if self.client_m.check_email_database(email) is not True:
                 print("\n'{}' n'existe pas dans la base de donnée.\n".format(
                     email))
             else:
                 password = getpass("Mot de passe: ")
-                if self.client_manager.check_password(email,password) is not True:
+                if self.client_m.check_password(email, password) is not True:
                     print("\nMot de passe incorrect.\n")
                 else:
                     self.session['user'] = email
@@ -103,7 +99,7 @@ class Interface:
 
     def show_favorites(self, client_id):
         """docstring"""
-        substitutes = self.favorite_manager.retrieve_substitutes(client_id)
+        substitutes = self.favorite_m.retrieve_substitutes(client_id)
         print("\n------ SUBSTITUTS ENREGISTRES ------\n")
         for dictionary in substitutes:
             print(c.display_favorites.format(**dictionary))
@@ -111,11 +107,11 @@ class Interface:
     def display_favorite_menu(self):
         if self.session['connected'] is False:
             self.log_in_menu()
-            id_client = self.client_manager.get_id_client(
+            id_client = self.client_m.get_id_client(
                 self.session['user'])
             self.show_favorites(id_client)
         else:
-            id_client = self.client_manager.get_id_client(
+            id_client = self.client_m.get_id_client(
                 self.session['user'])
             self.show_favorites(id_client)
         response = self.get_response(c.display_favorite_menu, "bq")
@@ -126,7 +122,7 @@ class Interface:
         next_step[response]()
 
     def show_chosen_substitute(self, code):
-        substitute = self.product_manager.get_chosen_substitute(code)
+        substitute = self.product_m.get_chosen_substitute(code)
         print("\n------ SUBSTITUT CHOISI ------\n")
         print(c.chosen_substitute.format(
             substitute[0]['substitute'],
@@ -140,31 +136,34 @@ class Interface:
         """docstring"""
         code = self.show_chosen_substitute(substitute_id)
         response = self.get_response(
-            c.display_chosen_substitute, "rq")
+            c.display_chosen_substitute, "rbq")
         next_step = {
-            "r": self.favorite_manager.record_substitute,
+            "r": self.favorite_m.record_substitute,
+            "b": self.display_substitute_menu,
             "q": self.quit_menu
         }
         if response == 'r':
             if self.session['connected'] is False:
                 self.log_in_menu()
-                id_client = self.client_manager.get_id_client(
+                id_client = self.client_m.get_id_client(
                     self.session['user'])
                 next_step[response](id_client, code)
                 self.valid_record()
                 self.display_substitute_menu(category_id)
             else:
-                id_client = self.client_manager.get_id_client(
+                id_client = self.client_m.get_id_client(
                     self.session['user'])
                 next_step[response](id_client, code)
                 self.valid_record()
                 self.display_substitute_menu(category_id)
+        elif response == 'b':
+            next_step[response](category_id)
         else:
             next_step[response]()
 
     def show_substitutes(self, category_id):
         """docstring"""
-        substitutes = self.product_manager.get_substitutes(category_id)
+        substitutes = self.product_m.get_substitutes(category_id)
         list_id = []
         print("\n------ SUBSTITUTS ------\n")
         for i, dictionary in enumerate(substitutes):
@@ -200,7 +199,7 @@ class Interface:
 
     def show_products(self, category_id):
         """docstring"""
-        products = self.product_manager.get_products(category_id)
+        products = self.product_m.get_products(category_id)
         print("\n------ PRODUITS ------\n")
         for i, dictionary in enumerate(products):
             i += 1
@@ -231,7 +230,7 @@ class Interface:
 
     def show_categories(self):
         """docstring"""
-        categories = self.category_manager.get_categories()
+        categories = self.category_m.get_categories()
         print("\n------ CATEGORIES ------\n")
         for dictionary in categories:
             print("{}. {}".format(
@@ -275,10 +274,10 @@ class Interface:
 
 
 if __name__ == "__main__":
-    downloader = product_downloader.ProductDownloader()
-    manager_cat = category_manager.CategoryManager(downloader)
-    manager_p = product_manager.ProductManager(downloader)
-    manage_cli = client_manager.ClientManager(downloader)
-    manage_fav = favorite_manager.FavoriteManager(downloader)
-    client = Interface(downloader, manager_cat, manager_p, manage_cli, manage_fav)
+    admin = product_d.ProductDownloader()
+    manage_cat = category_m.CategoryManager(admin)
+    manage_prod = product_m.ProductManager(admin)
+    manage_cli = client_m.ClientManager(admin)
+    manage_fav = favorite_m.FavoriteManager(admin)
+    client = Interface(admin, manage_cat, manage_prod, manage_cli, manage_fav)
     client.display_main_menu()
