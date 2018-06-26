@@ -31,7 +31,9 @@ class Interface:
     def get_response(self, prompt, valid_response):
         while True:
             response = input(prompt).strip()
-            if response in valid_response:
+            if response == "":
+                print("\nRéponse non valide\n")
+            elif response in valid_response:
                 return response
 
     def valid_record(self):
@@ -40,18 +42,27 @@ class Interface:
         print(c.information)
         time.sleep(3)
 
+    def return_to_main_menu(self, string):
+        """docstring"""
+        if string == 'm':
+            self.display_main_menu()
+        elif string == 'q':
+            self.quit_menu()
+
     def sign_in(self):
         """docstring"""
         print("\n----- INSCRIPTION -----\n")
         not_registered = True
         while not_registered:
-            email = input("Entrez votre email: ")
+            email = input(c.get_email)
+            self.return_to_main_menu(email)
             if self.client_m.check_email(email) is True:
                 print("\nAdresse email non valide.\n")
             elif self.client_m.check_email_database(email) is True:
                 print("'{}' existe déjà dans la base de donnée.".format(email))
             else:
-                password = input("Entrez votre mot de passe: ")
+                password = input(c.get_password)
+                self.return_to_main_menu(password)
                 if len(password) < 5:
                     print("\n6 caractères minimum.\n")
                 else:
@@ -64,12 +75,14 @@ class Interface:
         """docstring"""
         print("\n----- CONNEXION -----\n")
         while self.session['connected'] is False:
-            email = input("Email: ")
+            email = input(c.ask_email)
+            self.return_to_main_menu(email)
             if self.client_m.check_email_database(email) is not True:
                 print("\n'{}' n'existe pas dans la base de donnée.\n".format(
                     email))
             else:
-                password = getpass("Mot de passe: ")
+                password = getpass(c.ask_password)
+                self.return_to_main_menu(password)
                 if self.client_m.check_password(email, password) is not True:
                     print("\nMot de passe incorrect.\n")
                 else:
@@ -82,18 +95,21 @@ class Interface:
         self.sign_in()
         self.log_in()
 
-    def log_in_menu(self):
+    def log_in_menu(self, substitute_id, category_id):
         """docstring"""
-        response = self.get_response(c.display_login_menu, "12q")
+        response = self.get_response(c.display_login_menu, "12bq")
         next_step = {
             "1": self.log_in,
             "2": self.sign_in_then_log_in,
+            "b": self.record_substitute_menu,
             "q": self.quit_menu
         }
         if response == "1":
             next_step[response]()
         elif response == "2":
             next_step[response]()
+        elif response == "b":
+            next_step[response](substitute_id, category_id)
         else:
             next_step[response]()
 
@@ -101,12 +117,16 @@ class Interface:
         """docstring"""
         substitutes = self.favorite_m.retrieve_substitutes(client_id)
         print("\n------ SUBSTITUTS ENREGISTRES ------\n")
-        for dictionary in substitutes:
-            print(c.display_favorites.format(**dictionary))
+        list_url = []
+        for i, dictionary in enumerate(substitutes):
+            i += 1
+            list_url.append((i, dictionary['url']))
+            print(c.display_favorites.format(i, **dictionary))
+        return list_url
 
     def display_favorite_menu(self):
         if self.session['connected'] is False:
-            self.log_in_menu()
+            self.log_in()
             id_client = self.client_m.get_id_client(
                 self.session['user'])
             self.show_favorites(id_client)
@@ -123,7 +143,7 @@ class Interface:
 
     def show_chosen_substitute(self, code):
         substitute = self.product_m.get_chosen_substitute(code)
-        print("\n------ SUBSTITUT CHOISI ------\n")
+        print("\n------ SUBSTITUT SELETIONNE ------\n")
         print(c.chosen_substitute.format(
             substitute[0]['substitute'],
             substitute[0]['brand'],
@@ -144,7 +164,7 @@ class Interface:
         }
         if response == 'r':
             if self.session['connected'] is False:
-                self.log_in_menu()
+                self.log_in_menu(substitute_id, category_id)
                 id_client = self.client_m.get_id_client(
                     self.session['user'])
                 next_step[response](id_client, code)

@@ -50,9 +50,9 @@ class ProductDownloader:
         if len(stores.strip()) != 0:
             list_store = stores.split(c.comma)
             for store in list_store:
-                self.db.query(c.rds_store, name=store)
+                self.db.query(c.records_store, name=store)
                 self.db.query(
-                    c.rds_str_prod,
+                    c.records_store_product,
                     code=product_code,
                     store=store)
 
@@ -66,12 +66,12 @@ class ProductDownloader:
 
     def insert(self, products, category):
         """docstring"""
-        self.db.query(c.rds_cat, name=category)
+        self.db.query(c.records_category, name=category)
         for product in products:
             if self.is_product_invalid(product):
                 continue
             self.db.query(
-                c.rds_prod,
+                c.records_product,
                 code=product['code'],
                 name=product['product_name'],
                 brand=product.get('brands', ''),

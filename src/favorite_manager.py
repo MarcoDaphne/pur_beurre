@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # Coding: utf-8
 
+import webbrowser
+
 import product_downloader as p_downloader
 import constants as c
 
@@ -21,6 +23,9 @@ class FavoriteManager:
         datas = self.p_downloader.db.query(c.favorite, client=client_id)
         datas = datas.as_dict()
         return datas
+
+    def show_page_web(self, url):
+        webbrowser.open(url)
 
 
 if __name__ == '__main__':
