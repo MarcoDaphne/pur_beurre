@@ -119,9 +119,8 @@ class Interface:
         print("\n------ SUBSTITUTS ENREGISTRES ------\n")
         list_url = []
         for i, dictionary in enumerate(substitutes):
-            i += 1
-            list_url.append((i, dictionary['url']))
-            print(c.display_favorites.format(i, **dictionary))
+            list_url.append((i + 1, dictionary['url']))
+            print(c.display_favorites.format(i + 1, **dictionary))
         return list_url
 
     def display_favorite_menu(self):

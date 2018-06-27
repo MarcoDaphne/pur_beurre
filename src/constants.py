@@ -1,6 +1,6 @@
 url = 'https://fr.openfoodfacts.org/cgi/search.pl'
 
-connexion = "mysql+pymysql://testeur:camomille@localhost/test?charset=utf8mb4"
+connexion = "mysql+mysqlconnector://root:root@localhost/pur_beurre_p5?charset=utf8mb4"
 
 directory = "sql"
 
@@ -10,10 +10,8 @@ categories = [
     'Charcuterie',
     'Fromage',
     'Légume',
-    'Pizza',
+    'Lait',
     'Chocolat']
-
-comma = ','
 
 ########################
 
@@ -22,7 +20,8 @@ records_product = """
         product (code, name, brand, url, nutriscore, category_id)
     VALUES
         (:code, :name, :brand, :url, :nutriscore,
-        (SELECT id FROM category WHERE name = :cat_name))"""
+        (SELECT id FROM category WHERE name = :cat_name))
+    ON DUPLICATE KEY UPDATE code = :code"""
 
 records_category = """
     INSERT INTO

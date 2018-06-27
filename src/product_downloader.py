@@ -48,7 +48,7 @@ class ProductDownloader:
     def get_stores(self, stores, product_code):
         """docstring"""
         if len(stores.strip()) != 0:
-            list_store = stores.split(c.comma)
+            list_store = stores.split(',')
             for store in list_store:
                 self.db.query(c.records_store, name=store)
                 self.db.query(
