@@ -1,16 +1,34 @@
 #!/usr/bin/env python
 # Coding: utf-8
 
+"""This module responsible for retrieving
+information related to categories in the database.
+"""
+
 import product_downloader as p_downloader
-import constants as c
 
 
 class CategoryManager:
+    """This Class makes sql queries to get all categories."""
+
     def __init__(self, p_downloader):
+        """Constructor
+
+        Params:
+            p_downloader: Instance of the Class ProductDownloader
+
+        """
         self.p_downloader = p_downloader
 
     def get_categories(self):
-        datas = self.p_downloader.db.query(c.category)
+        """Select from database the categories's id and
+        the categories name on the database
+        """
+        datas = self.p_downloader.db.query("""
+            SELECT *
+            FROM category
+            ORDER BY id
+            """)
         datas = datas.as_dict()
         return datas
 
