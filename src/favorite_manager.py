@@ -46,7 +46,7 @@ class FavoriteManager:
                 ON product_code = product.code
                 WHERE product.code = :code
                 """, code=code)
-        datas = datas.as_dict()
+        datas = datas.all(as_dict=True)
         return datas
 
     def retrieve_favorites(self, client_id=int()):
@@ -66,7 +66,7 @@ class FavoriteManager:
                 ON client.id = favorite.client_id
                 WHERE client.id = :client
                 """, client=client_id)
-        datas = datas.as_dict()
+        datas = datas.all(as_dict=True)
         return datas
 
 

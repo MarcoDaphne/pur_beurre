@@ -119,10 +119,10 @@ class Interface:
         print("\n------ SUBSTITUTS ENREGISTRES ------\n")
         for i, dictionary in enumerate(favorites):
             code = dictionary['code']
-            stores = self.favorite_m.retrieve_stores(code)
-            for element in stores:
-                print(c.display_favorites.format(
-                    i + 1, element['store'], **dictionary))
+            store_names = [store['store'] for store in self.favorite_m.retrieve_stores(code)]
+            stores = ", ".join(store_names)
+            print(c.display_favorites.format(
+                i=i + 1, stores=stores, **dictionary))
 
     def display_favorite_menu(self):
         if self.session['connected'] is False:

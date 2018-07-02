@@ -110,10 +110,10 @@ ask_password = """\nm. Menu Principal\tq. Quitter
 \nMot de passe: """
 
 display_favorites = """
-{0}. {favorite}
+{i}. {favorite}
 Marque: {brand}
 Nutriscore: {nutriscore}
-Point de vente: {1}
+Point de vente: {stores}
 Url: {url}
 \n---------------------------------\n"""
 
