@@ -36,25 +36,34 @@ class FavoriteManager:
                 VALUES (:client_id, :product_id)
                 """, client_id=client, product_id=code)
 
-    def retrieve_substitutes(self, client_id=int()):
+    def retrieve_stores(self, code=int()):
+        datas = self.p_downloader.db.query("""
+                SELECT store.name as store
+                FROM store
+                INNER JOIN store_product
+                ON store_id = store.id
+                INNER JOIN product
+                ON product_code = product.code
+                WHERE product.code = :code
+                """, code=code)
+        datas = datas.as_dict()
+        return datas
+
+    def retrieve_favorites(self, client_id=int()):
         """Select from database the name, brand,
-        store, nutriscore, url of the substitute
+        store, nutriscore, url of the favorite
         according to the user id
 
         Params:
             client_id: User id number"""
         datas = self.p_downloader.db.query("""
-                SELECT product.name as substitute, brand,
-                    store.name as store, nutriscore, url
+                SELECT product.code, product.name as favorite,
+                brand, nutriscore, url
                 FROM product
                 INNER JOIN favorite
                 ON product_id = product.code
                 INNER JOIN client
                 ON client.id = favorite.client_id
-                LEFT JOIN store_product
-                ON product_code = product.code
-                LEFT JOIN store
-                ON store.id = store_id
                 WHERE client.id = :client
                 """, client=client_id)
         datas = datas.as_dict()
@@ -66,3 +75,4 @@ if __name__ == '__main__':
     manage_favorite = FavoriteManager(p_downloader)
     manage_favorite.record_substitute()
     manage_favorite.retrieve_substitutes()
+    manage_favorite.test()

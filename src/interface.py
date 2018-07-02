@@ -115,13 +115,14 @@ class Interface:
 
     def show_favorites(self, client_id):
         """docstring"""
-        substitutes = self.favorite_m.retrieve_substitutes(client_id)
+        favorites = self.favorite_m.retrieve_favorites(client_id)
         print("\n------ SUBSTITUTS ENREGISTRES ------\n")
-        list_url = []
-        for i, dictionary in enumerate(substitutes):
-            list_url.append((i + 1, dictionary['url']))
-            print(c.display_favorites.format(i + 1, **dictionary))
-        return list_url
+        for i, dictionary in enumerate(favorites):
+            code = dictionary['code']
+            stores = self.favorite_m.retrieve_stores(code)
+            for element in stores:
+                print(c.display_favorites.format(
+                    i + 1, element['store'], **dictionary))
 
     def display_favorite_menu(self):
         if self.session['connected'] is False:

@@ -9,9 +9,9 @@ create_table = 'create_table.sql'
 categories = [
     'Charcuterie',
     'Fromage',
-    'Légume',
-    'Lait',
-    'Chocolat']
+    'Steack',
+    'Pizza',
+    'Crème Glacée']
 
 ########################
 
@@ -42,22 +42,7 @@ records_store_product = """
     VALUES
         ((SELECT id FROM store WHERE name = :store), :code)"""
 
-register_client = """
-    INSERT INTO
-        client (email, password)
-    VALUES
-        (:email, :password)
-    ON DUPLICATE KEY UPDATE email = :email"""
-
-record_substitute = """
-    INSERT INTO
-        favorite (client_id, product_id)
-    VALUES
-        (:client_id, :product_id)"""
-
 ########################
-
-list_email = """SELECT email FROM client"""
 
 favorite = """
     SELECT
@@ -72,51 +57,6 @@ favorite = """
     LEFT JOIN store
     ON store.id = store_id
     where client.id = :client"""
-
-category = """SELECT * from category ORDER BY id"""
-
-product = """
-    SELECT name
-    FROM product
-    WHERE category_id = :cat_id
-    AND nutriscore BETWEEN 'C' AND 'E'
-    ORDER BY RAND()
-    LIMIT 10"""
-
-chosen_product = """
-    SELECT
-    product.code, product.name as substitute,
-    brand, store.name as store, nutriscore, url
-    FROM product
-    LEFT JOIN store_product
-    ON product.code = product_code
-    LEFT JOIN store
-    ON store.id = store_id
-    WHERE product.code = :code"""
-
-substitute = """
-    SELECT code, name, nutriscore
-    FROM product
-    WHERE category_id = :cat_id
-    AND nutriscore BETWEEN 'A' AND 'B'
-    ORDER BY RAND()
-    LIMIT 5"""
-
-check_password = """
-    SELECT
-        password
-    FROM
-        client
-    WHERE
-        email = :email"""
-
-id_client = """
-    SELECT
-        id
-    FROM
-        client
-    WHERE
-        email = :email"""
 
 ########################
 
@@ -170,12 +110,12 @@ ask_password = """\nm. Menu Principal\tq. Quitter
 \nMot de passe: """
 
 display_favorites = """
-{}. {substitute}
+{0}. {favorite}
 Marque: {brand}
-Point de vente: {store}
 Nutriscore: {nutriscore}
+Point de vente: {1}
 Url: {url}
-\n------------------------------------------------\n"""
+\n---------------------------------\n"""
 
 valid_record = "\nLe produit est enregistré.\n"
 
