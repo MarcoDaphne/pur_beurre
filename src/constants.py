@@ -60,7 +60,7 @@ favorite = """
 
 ########################
 
-display_menu = """\n------ MENU PRINCIPALE ------\n
+display_menu = """\n****** MENU PRINCIPAL ******\n
 1. Quel aliment souhaitez-vous remplacer ?
 2. Retrouver mes aliments substitués.
 \nq. Quitter.
@@ -69,26 +69,24 @@ display_menu = """\n------ MENU PRINCIPALE ------\n
 display_categories = """\nb. Retour\tq. Quitter
 \nSélectionnez une catégorie: """
 
-display_products = """\nb. Retour\tq. Quitter
+display_products = """\nb. Retour\tm. Menu Principal\tq. Quitter
 \nSélectionnez un produit: """
 
-display_chosen_substitute = """\nr. Enregistrer
-\nb. Retour\tq. Quitter
+display_chosen_substitute = """r. Enregistrer
+\nb. Retour\tm. Menu Principal\tq. Quitter
 \nEntrez votre réponse: """
 
-chosen_substitute = """\n--------------------\n
-{}
+chosen_substitute = """{}
 Marque: {}
 Point de vente: {}
 Nutriscore: {}
 {}\n
---------------------"""
+"""
 
-display_substitutes = """\nb. Retour
-q. Quitter
+display_substitutes = """\nb. Retour\tm. Menu Principal\tq. Quitter
 \nSélectionnez un substitut: """
 
-display_login_menu = """\n----- INSCRIPTION - CONNEXION -----\n
+display_login_menu = """\n****** INSCRIPTION - CONNEXION ******\n
 1. Se connecter
 2. S'inscrire
 \nb. Retour\tq. Quitter
@@ -115,12 +113,12 @@ Marque: {brand}
 Nutriscore: {nutriscore}
 Point de vente: {stores}
 Url: {url}
-\n---------------------------------\n"""
+\n_______________________\n"""
 
 valid_record = "\nLe produit est enregistré.\n"
 
 information = """Retrouvez vos produits préférés dans la section :
 [ Retrouver mes aliments substitués ]
-Menu Principale > choix n°2"""
+Menu Principal > choix n°2"""
 
 check = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'

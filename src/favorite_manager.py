@@ -37,6 +37,12 @@ class FavoriteManager:
                 """, client_id=client, product_id=code)
 
     def retrieve_stores(self, code=int()):
+        """Select from database the store names
+        according to product's code
+
+        Params:
+            code: Product code number
+        """
         datas = self.p_downloader.db.query("""
                 SELECT store.name as store
                 FROM store
@@ -69,10 +75,28 @@ class FavoriteManager:
         datas = datas.all(as_dict=True)
         return datas
 
+    def check(self, substitute_id=int(), client_id=int):
+        """Check if the product code of the substitute exists
+        in the database then returns true if it exists
+
+        Params:
+            substitute_id (int()): Product code of the substitute
+            client_id (int()): User id
+        """
+        datas = self.p_downloader.db.query("""
+                SELECT product_id
+                FROM favorite
+                WHERE client_id = :client_id
+                """, client_id=client_id)
+        datas = datas.all(as_dict=True)
+        for element in datas:
+            if substitute_id == element['product_id']:
+                return True
+
 
 if __name__ == '__main__':
     p_downloader = p_downloader.ProductDownloader()
     manage_favorite = FavoriteManager(p_downloader)
     manage_favorite.record_substitute()
-    manage_favorite.retrieve_substitutes()
-    manage_favorite.test()
+    manage_favorite.retrieve_favorites()
+    manage_favorite.check()
