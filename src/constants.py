@@ -2,10 +2,6 @@ url = 'https://fr.openfoodfacts.org/cgi/search.pl'
 
 connexion = "mysql+mysqlconnector://root:root@localhost/pur_beurre_p5?charset=utf8mb4"
 
-directory = "sql"
-
-create_table = 'create_table.sql'
-
 categories = [
     'Charcuterie',
     'Fromage',

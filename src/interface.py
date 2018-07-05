@@ -17,7 +17,7 @@ import constants as c
 
 
 class Interface:
-    """docstring"""
+    """This class serves as an interface to the user"""
 
     def __init__(self, product_d, category_m, product_m, client_m, favorite_m):
         """Constructor

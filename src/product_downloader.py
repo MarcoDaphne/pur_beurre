@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-"""docstring"""
+"""This module is responsible for downloading the data and
+storing it in the database.
+"""
 
 import os
 
@@ -12,7 +14,11 @@ import constants as c
 
 
 class ProductDownloader:
-    """docstring"""
+    """This class retrieves the data
+    according to five categories,
+    create the tables of the database
+    and then store the data in database.
+    """
 
     def __init__(self):
         """Constructor"""
@@ -20,7 +26,13 @@ class ProductDownloader:
         self.db = records.Database(c.connexion)
 
     def get_response(self, category, number=20):
-        """docstring"""
+        """Make a GET request on Open Food Facts url
+        and then return the products data in JSON format.
+
+        Params:
+            category (str()): Category of products
+            number (int()): Number of products to recover
+        """
         parameters = {
             "action": "process",
             "tagtype_0": "categories",
@@ -32,21 +44,40 @@ class ProductDownloader:
         response = requests.get(self.url, params=parameters)
         return response.json()['products']
 
-    def load(self, file, sql=c.directory):
-        """docstring"""
+    def load(self, file, sql="sql"):
+        """Access a file in a folder that is in the parent
+        folder of the module then return the path to the file.
+
+        Params:
+            file: The file used
+            sql: The folder where the file is located
+        """
         directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         path_to_file = os.path.join(directory, sql, file)
         return path_to_file
 
     def create_table(self):
-        """docstring"""
-        create = self.load(c.create_table)
+        """Create tables in the database.
+
+        Browse each line of the file after opening it
+        and execute the sql commands.
+        """
+        create = self.load("create_table.sql")
         with open(create) as f:
             for line in f:
                 self.db.query(line)
 
     def get_stores(self, stores, product_code):
-        """docstring"""
+        """Retrieve the stores to add them to the database.
+
+        Check that the string is not empty.
+        Add each store to a comma-separated list.
+        Browse the list of stores and add them to the database.
+
+        Params:
+            stores: Product stores
+            product_code: Product code
+        """
         if len(stores.strip()) != 0:
             list_store = stores.split(',')
             for store in list_store:
@@ -57,7 +88,14 @@ class ProductDownloader:
                     store=store)
 
     def is_product_invalid(self, product):
-        """docstring"""
+        """Check existence of product data
+
+        Browse a list of keys, verify that
+        the key or value is present.
+
+        Params:
+            product: Product
+        """
         keys = ['code', 'product_name', 'nutrition_grade_fr', 'url']
         for key in keys:
             if key not in product or not product[key]:
@@ -65,7 +103,13 @@ class ProductDownloader:
         return False
 
     def insert(self, products, category):
-        """docstring"""
+        """Define the categories, stores, key information
+        to add to the database by making the necessary checks.
+
+        Params:
+            products: Products in Open Food Facts
+            category: Category of products
+        """
         self.db.query(c.records_category, name=category)
         for product in products:
             if self.is_product_invalid(product):
@@ -81,7 +125,7 @@ class ProductDownloader:
             self.get_stores(product.get('stores', ''), product['code'])
 
     def insert_data(self):
-        """docstring"""
+        """Insert in the database the product data for each category"""
         for category in c.categories:
             data = self.get_response(category, 1000)
             self.insert(data, category)
