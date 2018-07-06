@@ -1,6 +1,7 @@
 url = 'https://fr.openfoodfacts.org/cgi/search.pl'
 
-connexion = "mysql+mysqlconnector://root:root@localhost/pur_beurre_p5?charset=utf8mb4"
+connexion = (
+    "mysql+mysqlconnector://root:root@localhost/pur_beurre_p5?charset=utf8mb4")
 
 categories = [
     'Charcuterie',
@@ -117,4 +118,5 @@ information = """Retrouvez vos produits préférés dans la section :
 [ Retrouver mes aliments substitués ]
 Menu Principal > choix n°2"""
 
-check = '^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$'
+check = (
+    r'^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$')

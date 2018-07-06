@@ -19,21 +19,13 @@ import constants as c
 class Interface:
     """This class serves as an interface to the user"""
 
-    def __init__(self, product_d, category_m, product_m, client_m, favorite_m):
-        """Constructor
-
-        Params:
-            product_d: Instance of the Class ProductDownloader
-            category_m: Instance of the Class CategoryManager
-            product_m: Instance of the Class ProductManager
-            client_m: Instance of the Class ClientManager
-            favorite_m: Instance of the Class FavoriteManager
-        """
-        self.product_d = product_d
-        self.category_m = category_m
-        self.product_m = product_m
-        self.client_m = client_m
-        self.favorite_m = favorite_m
+    def __init__(self):
+        """Constructor"""
+        self.product_d = product_d.ProductDownloader()
+        self.category_m = category_m.CategoryManager(self.product_d)
+        self.product_m = product_m.ProductManager(self.product_d)
+        self.client_m = client_m.ClientManager(self.product_d)
+        self.favorite_m = favorite_m.FavoriteManager(self.product_d)
         self.session = {'user': None, 'connected': False}
 
     def get_response(self, prompt, valid_response):
@@ -191,7 +183,7 @@ class Interface:
         for i, dictionary in enumerate(favorites):
             code = dictionary['code']
             store_names = self.favorite_m.retrieve_stores(code)
-            store_names = [store['store']for store in store_names]
+            store_names = [store['store'] for store in store_names]
             stores = ", ".join(store_names)
             print(c.display_favorites.format(
                 i=i + 1, stores=stores, **dictionary))
@@ -335,21 +327,15 @@ class Interface:
         list_id = self.show_substitutes(category_id)
         response = self.get_response(c.display_substitutes, "12345bmq")
         next_step = {
-            "1": self.record_substitute_menu,
-            "2": self.record_substitute_menu,
-            "3": self.record_substitute_menu,
-            "4": self.record_substitute_menu,
-            "5": self.record_substitute_menu,
-            "b": self.display_product_menu,
             "m": self.display_main_menu,
             "q": self.quit_menu
         }
         if response in ['1', '2', '3', '4', '5']:
             for element in list_id:
                 if int(response) == element[0]:
-                    next_step[response](element[1], category_id)
+                    self.record_substitute_menu(element[1], category_id)
         elif response == 'b':
-            next_step[response](category_id)
+            self.display_product_menu(category_id)
         else:
             next_step[response]()
 
@@ -387,24 +373,16 @@ class Interface:
             category_id (int()): Number of the category
         """
         self.show_products(category_id)
-        response = self.get_response(c.display_products, "12345678910bmq")
+        response = self.get_response(
+            c.display_products,
+            ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'b', 'm', 'q'])
         next_step = {
-            "1": self.display_substitute_menu,
-            "2": self.display_substitute_menu,
-            "3": self.display_substitute_menu,
-            "4": self.display_substitute_menu,
-            "5": self.display_substitute_menu,
-            "6": self.display_substitute_menu,
-            "7": self.display_substitute_menu,
-            "8": self.display_substitute_menu,
-            "9": self.display_substitute_menu,
-            "10": self.display_substitute_menu,
             "b": self.display_category_menu,
             "m": self.display_main_menu,
             "q": self.quit_menu
         }
         if response in ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']:
-            next_step[response](category_id)
+            self.display_substitute_menu(category_id)
         else:
             next_step[response]()
 
@@ -434,19 +412,14 @@ class Interface:
         as a parameter of the next step (product display)
         """
         self.show_categories()
-        response = self.get_response(c.display_categories, "12345bq")
+        response = self.get_response(c.display_categories, list("12345bq"))
         next_step = {
-            "1": self.display_product_menu,
-            "2": self.display_product_menu,
-            "3": self.display_product_menu,
-            "4": self.display_product_menu,
-            "5": self.display_product_menu,
             "b": self.display_main_menu,
             "q": self.quit_menu
         }
         if response in ['1', '2', '3', '4', '5']:
             category_id = int(response)
-            next_step[response](category_id)
+            self.display_product_menu(category_id)
         else:
             next_step[response]()
 
@@ -468,7 +441,7 @@ class Interface:
         2: if he wants to find his registered substitutes
         q: Quit
         """
-        response = self.get_response(c.display_menu, "12q")
+        response = self.get_response(c.display_menu, list("12q"))
         next_step = {
             "1": self.display_category_menu,
             "2": self.display_favorite_menu,
@@ -478,10 +451,5 @@ class Interface:
 
 
 if __name__ == "__main__":
-    admin = product_d.ProductDownloader()
-    manage_cat = category_m.CategoryManager(admin)
-    manage_prod = product_m.ProductManager(admin)
-    manage_cli = client_m.ClientManager(admin)
-    manage_fav = favorite_m.FavoriteManager(admin)
-    client = Interface(admin, manage_cat, manage_prod, manage_cli, manage_fav)
+    client = Interface()
     client.display_main_menu()
