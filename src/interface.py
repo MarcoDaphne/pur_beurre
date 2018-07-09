@@ -221,11 +221,14 @@ class Interface:
             substitute_id (int()): Product code
         """
         substitute = self.product_m.get_chosen_substitute(substitute_id)
+        store_names = self.favorite_m.retrieve_stores(substitute[0]['code'])
+        store_names = [store['store'] for store in store_names]
+        stores = ", ".join(store_names)
         print("\n****** SUBSTITUT SELECTIONNE ******\n")
         print(c.chosen_substitute.format(
             substitute[0]['substitute'],
             substitute[0]['brand'],
-            substitute[0]['store'],
+            stores,
             substitute[0]['nutriscore'],
             substitute[0]['url']))
         return substitute[0]['code']
