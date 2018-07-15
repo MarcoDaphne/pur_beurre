@@ -74,13 +74,8 @@ class ProductManager:
             code: Product's code
         """
         datas = self.p_downloader.db.query("""
-                SELECT product.code, product.name as substitute,
-                brand, store.name as store, nutriscore, url
+                SELECT code, name, brand, nutriscore, url
                 FROM product
-                LEFT JOIN store_product
-                ON product.code = product_code
-                LEFT JOIN store
-                ON store.id = store_id
                 WHERE product.code = :code
                 """, code=code)
         datas = datas.as_dict()

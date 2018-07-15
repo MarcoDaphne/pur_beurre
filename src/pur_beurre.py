@@ -226,7 +226,7 @@ class Interface:
         stores = ", ".join(store_names)
         print("\n****** SUBSTITUT SELECTIONNE ******\n")
         print(c.chosen_substitute.format(
-            substitute[0]['substitute'],
+            substitute[0]['name'],
             substitute[0]['brand'],
             stores,
             substitute[0]['nutriscore'],

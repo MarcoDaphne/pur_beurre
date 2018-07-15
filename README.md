@@ -16,60 +16,44 @@ Use public data from the Open Food Facts
   - Request login if the user wants to find his favorites.
   - Display the user's favorites. 
 
+
 ## Prerequisites:
 
-  - Open the Mysql terminal:
-    If you do not have it, install MAMP and add the path in the environment variables.
-    
-    For Windows or macOS:
-    https://www.mamp.info/en/downloads/
+### Create a Mysql Database:
+  mysql> CREATE DATABASE db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-    For the first connection use the user 'root' and password 'root'.
+### Create a Mysql user:
+  mysql> CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';
 
-  - Open the command prompt:
-    open the search bar and type 'cmd.exe' and enter.
+### Give all rights to the user:
+  mysql> GRANT ALL ON db.* TO 'user'@'localhost';
 
-  - Have an email address.
 
 ## TODO:
 
-### 1. Create a Mysql Database:
-  mysql> CREATE DATABASE db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
-### 2. Create a Mysql user:
-  mysql> CREATE USER 'user'@'localhost' IDENTIFIED BY 'password';
-
-### 3. Give all rights to the user:
-  mysql> GRANT ALL ON db.* TO 'user'@'localhost';
-
-### 4. Download the repository by clicking on clone or download:
+### 1. Download the repository by clicking on clone or download:
   if it is not done yet...
-  command line> git clone https://github.com/MarcoDaphne/pur_beurre.git
+  $ git clone https://github.com/MarcoDaphne/pur_beurre.git
 
-### 5. Install the virtual environment:
-  command line> virtualenv env
+### 2. Install the virtual environment
 
-### 6. Activate the virtual environment:
-  command line> env\scripts\activate
+### 3. Activate the virtual environment
 
-### 7. Install useful libraries:
-  (env)command line> pip install -r requirements.txt
+### 4. Install useful libraries:
+  $ pip install -r requirements.txt
 
-### 8. Match the database, the user and his password with the program:
-  - Open the folder hosting the program.
-  - Open the folder 'src'.
-  - Open the file 'constants.py'.
-  - Go to the line 4 then replace the database, the user and his password
+### 5. Match the database, the user and his password with the program:
+  - Open the file 'constants.py' in the 'src' folder of the program.
+  - Replace the database, the user and his password
     with the information previously entered.
+    
     Example:
       Before: "mysql+mysqlconnector://root:root@localhost/pur_beurre_p5?charset=utf8mb4"
+
       After:  "mysql+mysqlconnector://user:password@localhost/db?charset=utf8mb4"
 
-### 9. Download products:
-  (env)command line> py product_downloader.py
+### 6. Download products:
+  $ python product_downloader.py
 
-### 10. Launch the program
-  (env)command line> py pur_beurre.py
-
-### Have fun and do not forget to disable the virtual environment:
-  (env)command line> deactivate
+### 7. Launch the program
+  $ python pur_beurre.py

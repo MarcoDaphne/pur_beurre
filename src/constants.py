@@ -41,22 +41,6 @@ records_store_product = """
 
 ########################
 
-favorite = """
-    SELECT
-    product.name as substitute, brand, store.name as store, nutriscore, url
-    FROM product
-    INNER JOIN favorite
-    ON product_id = product.code
-    INNER JOIN client
-    ON client.id = favorite.client_id
-    LEFT JOIN store_product
-    ON product.code = product_code
-    LEFT JOIN store
-    ON store.id = store_id
-    where client.id = :client"""
-
-########################
-
 display_menu = """\n****** MENU PRINCIPAL ******\n
 1. Quel aliment souhaitez-vous remplacer ?
 2. Retrouver mes aliments substitués.
